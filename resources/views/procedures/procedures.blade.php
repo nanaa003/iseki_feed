@@ -54,13 +54,13 @@
                                 <span style="padding-left: 50px; padding-right: 50px;"><b>+</b> Add</span>
                             </button>
                         </div>
-                        <div class="col-12 col-md-3 offset-md-6">
+                        {{-- <div class="col-12 col-md-3 offset-md-6">
                             <!-- Tombol Item di kanan -->
                             <button class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#itemModal">
                                 <span style="padding-left: 50px; padding-right: 50px;"><i
                                         class="material-symbols-rounded">docs_add_on</i> Item</span>
                             </button>
-                        </div>
+                        </div> --}}
                     </div>
                 </div>
 
@@ -321,7 +321,7 @@
     <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl modal-dialog-centered">
             <div class="modal-content">
-                <div class="modal-header bg-gradient-primary">
+                <div class="modal-header bg-primary">
                     <h5 class="modal-title text-white" id="previewModalLabel">Preview Procedure <span
                             id="title"></span></h5>
                     <button type="button" class="btn-close text-white" data-bs-dismiss="modal"
@@ -379,7 +379,7 @@
         function setEdit(data) {
             // Set form action
             const form = document.getElementById('editForm');
-            form.action = '/procedure/tractor/area/procedure/update/' + data
+            form.action = 'http://192.168.173.207/iseki_feed/public/procedure/tractor/area/procedure/update/' + data
                 .Id_Procedure; // Sesuaikan route-mu
 
             // Isi data
@@ -401,13 +401,13 @@
             // Set action form
             const form = document.getElementById('deleteForm');
             form.action =
-                `/procedure/tractor/area/procedure/delete/${data.Id_Procedure}`; // Sesuaikan dengan rute sebenarnya jika beda
+                `http://192.168.173.207/iseki_feed/public/procedure/tractor/area/procedure/delete/${data.Id_Procedure}`; // Sesuaikan dengan rute sebenarnya jika beda
         }
 
         function setUpload(data) {
             // Set form action
             const form = document.getElementById('uploadForm');
-            form.action = '/procedure/tractor/area/procedure/upload/' + data
+            form.action = 'http://192.168.173.207/iseki_feed/public/procedure/tractor/area/procedure/upload/' + data
                 .Id_Procedure; // Sesuaikan route-mu
 
             // Isi data

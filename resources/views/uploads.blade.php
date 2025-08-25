@@ -47,7 +47,7 @@
                             <tr>
                                 <th style="width:5%">No</th>
                                 <th style="width:35%">Video</th>
-                                <th Keterangan</th>
+                                <th>Keterangan</th>
                                 <th style="width:20%">Action</th>
                             </tr>
                         </thead>

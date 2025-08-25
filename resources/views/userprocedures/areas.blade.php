@@ -39,9 +39,9 @@
             @endif
 
             <!-- Tombol Add -->
-            <button class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#addModal">
+            {{-- <button class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#addModal">
                 <span style="padding-left: 50px; padding-right: 50px;"><b>+</b> Add</span>
-            </button>
+            </button> --}}
 
             <div class="table-responsive p-0">
                 <table id="example" class="table align-items-center mb-0">
@@ -71,8 +71,6 @@
                                         {{ $a->Name_Area }}
                                     </a>
                                 </p>
-                            </td>
-                            <td class="align-middle text-center">
                             </td>
                         </tr>
                         @endforeach

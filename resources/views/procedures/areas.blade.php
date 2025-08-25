@@ -118,11 +118,11 @@
                     <div class="modal-body">
                         <div class="form-group my-3">
                             <label class="form-label">Name Tractor</label>
-                            <input type="text" class="form-control" name="Name_Tractor" value="" required>
+                            <input type="text" class="form-control" name="Name_Tractor" value="{{ $tractor }}" readonly required>
                         </div>
                         <div class="form-group my-3">
                             <label class="form-label">Name Area</label>
-                            <input type="text" class="form-control" name="Name_Tractor" value="" required>
+                            <input type="text" class="form-control" name="Name_Area" value="" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -148,11 +148,11 @@
                     <div class="modal-body">
                         <div class="form-group my-3">
                             <label class="form-label">Name Tractor</label>
-                            <input type="text" class="form-control" name="Name_Tractor" value="" required>
+                            <input type="text" class="form-control" name="Name_Tractor" value="" id="edit-tractor" readonly required>
                         </div>
                         <div class="form-group my-3">
                             <label class="form-label">Name Area</label>
-                            <input type="text" class="form-control" name="Name_Tractor" value="" required>
+                            <input type="text" class="form-control" name="Name_Area" value="" id="edit-area" required>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -209,7 +209,7 @@
         function setEdit(data) {
             // Set form action
             const form = document.getElementById('editForm');
-            form.action = '/procedure/tractor/area/update/' + data.Id_Area; // Sesuaikan route-mu
+            form.action = 'http://192.168.173.207/iseki_feed/public/procedure/tractor/area/update/' + data.Id_Area; // Sesuaikan route-mu
 
             // Isi data
             document.getElementById('edit-tractor').value = data.Name_Tractor;
@@ -227,7 +227,7 @@
 
             // Set action form
             const form = document.getElementById('deleteForm');
-            form.action = `/procedure/tractor/area/delete/${data.Id_Area}`; // Sesuaikan dengan rute sebenarnya jika beda
+            form.action = `http://192.168.173.207/iseki_feed/public/procedure/tractor/area/delete/${data.Id_Area}`; // Sesuaikan dengan rute sebenarnya jika beda
         }
     </script>
 @endsection

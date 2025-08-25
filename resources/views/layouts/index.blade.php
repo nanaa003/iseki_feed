@@ -20,7 +20,7 @@
         rel="stylesheet" type="text/css" /> --}}
 
     <!-- SimpleLightbox CSS -->
-    <link href={{ asset('assets/css/simpleLightbox.min.cs') }} rel="stylesheet" />
+    <link href={{ asset('assets/css/simpleLightbox.min.css') }} rel="stylesheet" />
 
     <!-- Core Theme CSS (Bootstrap + custom) -->
     <link href="{{ asset('assets/css/styles.css') }}" rel="stylesheet" />
@@ -72,7 +72,7 @@
 <script src="{{ asset('assets/js/scripts.js') }}"></script>
 
 <!-- SB Forms JS -->
-<script src="{{ asset('assets/js/sb-forms-latest.js') }}"></script>
+<script src="{{ asset('assets/js/sb-forms-0.4.1.js') }}"></script>
 
 @yield('script')
 

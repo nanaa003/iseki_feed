@@ -25,6 +25,7 @@ class UploadController extends Controller
     public function store(Request $request)
     {
         // dd(ini_get('upload_max_filesize'), ini_get('post_max_size'));
+        // dd($request->all());
 
         $request->validate([
             'video' => 'required|mimes:mp4,mov,avi,wmv,flv,webm|max:2048000', // 2GB
@@ -37,7 +38,7 @@ class UploadController extends Controller
             'Video_Path_Upload' => $path,
             'Desc_Upload' => $request->desc,
         ]);
-
+        
         return redirect()->route('uploads')->with('success', 'Video berhasil ditambahkan!');
     }
 

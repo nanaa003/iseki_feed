@@ -201,7 +201,7 @@
             function setEdit(data) {
                 // Set form action
                 const form = document.getElementById('editForm');
-                form.action = '/procedure/tractor/update/' + data.Id_Tractor; // Sesuaikan route-mu
+                form.action = 'http://192.168.173.207/iseki_feed/public/procedure/tractor/update/' + data.Id_Tractor; // Sesuaikan route-mu
 
                 // Isi data
                 document.getElementById('edit-name').value = data.Name_Tractor;
@@ -219,7 +219,7 @@
                 // Set action form
                 const form = document.getElementById('deleteForm');
                 form.action =
-                    `/procedure/tractor/delete/${data.Id_Tractor}`; // Sesuaikan dengan rute sebenarnya jika beda
+                    `http://192.168.173.207/iseki_feed/public/procedure/tractor/delete/${data.Id_Tractor}`; // Sesuaikan dengan rute sebenarnya jika beda
             }
         </script>
     @endsection
