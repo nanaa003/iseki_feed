@@ -171,7 +171,7 @@
             function setEdit(data) {
                 // Set form action
                 const form = document.getElementById('editForm');
-                form.action = '/iseki_aspro/public/procedure/tractor/update/' + data.Id_Tractor; // Sesuaikan route-mu
+                form.action = '/iseki_feed/public/procedure/tractor/update/' + data.Id_Tractor; // Sesuaikan route-mu
 
                 // Isi data
                 document.getElementById('edit-name').value = data.Name_Tractor;
@@ -189,7 +189,7 @@
                 // Set action form
                 const form = document.getElementById('deleteForm');
                 form.action =
-                    `/iseki_aspro/public/procedure/tractor/delete/${data.Id_Tractor}`; // Sesuaikan dengan rute sebenarnya jika beda
+                    `/iseki_feed/public/procedure/tractor/delete/${data.Id_Tractor}`; // Sesuaikan dengan rute sebenarnya jika beda
             }
         </script>
     @endsection

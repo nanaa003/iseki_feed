@@ -70,7 +70,7 @@
                                     </td>
                                     <td class="align-middle text-center">
                                         <p class="text-xs">
-                                            <a href="{{ route('procedure.area.index', ['Name_Tractor' => $p->Name_Tractor]) }}"
+                                            <a href="{{ route('userprocedure.area.index', ['Name_Tractor' => $p->Name_Tractor]) }}"
                                                 class="text-primary">
                                                 {{ $p->Name_Tractor }}
                                             </a>
@@ -78,7 +78,7 @@
                                     </td>
                                     <td class="align-middle text-center">
                                         <p class="text-xs">
-                                            <a href="{{ route('procedure.procedure.index', ['Name_Tractor' => $p->Name_Tractor, 'Name_Area' => $p->Name_Area]) }}"
+                                            <a href="{{ route('userprocedure.procedure.index', ['Name_Tractor' => $p->Name_Tractor, 'Name_Area' => $p->Name_Area]) }}"
                                                 class="text-primary">
                                                 {{ $p->Name_Area }}
                                             </a>
@@ -325,7 +325,23 @@
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/datatables/datatables.min.js') }}"></script>
     <script>
-        new DataTable('#example');
+        // new DataTable('#example');
+        $(document).ready(function() {
+            var table;
+
+            if ($.fn.DataTable.isDataTable('#example')) {
+                table = $('#example').DataTable();
+                table.page.len(100).draw(); // ✅ paksa default 100
+            } else {
+                table = $('#example').DataTable({
+                    pageLength: 100,
+                    lengthMenu: [
+                        [10, 25, 50, 100, -1],
+                        [10, 25, 50, 100, "All"]
+                    ]
+                });
+            }
+        });
     </script>
     <script>
         function setEdit(data) {
@@ -353,13 +369,13 @@
             // Set action form
             const form = document.getElementById('deleteForm');
             form.action =
-                `/iseki_aspro/public/procedure/tractor/area/procedure/delete/${data.Id_Procedure}`; // Sesuaikan dengan rute sebenarnya jika beda
+                `/iseki_feed/public/procedure/tractor/area/procedure/delete/${data.Id_Procedure}`; // Sesuaikan dengan rute sebenarnya jika beda
         }
 
         function setUpload(data) {
             // Set form action
             const form = document.getElementById('uploadForm');
-            form.action = '/iseki_aspro/public/procedure/tractor/area/procedure/upload/' + data
+            form.action = '/iseki_feed/public/procedure/tractor/area/procedure/upload/' + data
                 .Id_Procedure; // Sesuaikan route-mu
 
             // Isi data

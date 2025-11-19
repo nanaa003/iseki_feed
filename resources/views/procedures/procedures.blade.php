@@ -175,7 +175,7 @@
                         <div class="form-group my-3">
                             <label class="form-label">Upload Procedure (PDF)</label>
                             <input type="file" class="form-control" name="File_Procedure[]" accept="application/pdf"
-                                multiple required>
+                                multiple>
                         </div>
                         <!-- Upload Video Procedure -->
                         <div class="form-group my-3">

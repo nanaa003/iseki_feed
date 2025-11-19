@@ -14,12 +14,10 @@ use Illuminate\Support\Str;
 
 function sanitizeFileName($name)
 {
-    // Ambil ekstensi
     $extension = pathinfo($name, PATHINFO_EXTENSION);
-    // Ambil nama tanpa ekstensi & sanitize
     $basename = pathinfo($name, PATHINFO_FILENAME);
-    $clean = preg_replace('/[^a-zA-Z0-9._-]/', '_', $basename); // hanya izinkan alfanumerik, titik, underscore, dash
-    $clean = trim($clean, '_');
+    $clean = preg_replace('/[^a-zA-Z0-9._\- ]/', '_', $basename);
+    $clean = trim($clean, ' _');
     return $clean . '.' . $extension;
 }
 
@@ -302,14 +300,31 @@ class ProcedureController extends Controller
     public function index_procedure($Name_Tractor, $Name_Area)
     {
         $page = "procedure";
-
         $tractor = $Name_Tractor;
         $photoTractor = Tractor::where('Name_Tractor', $Name_Tractor)->value('Photo_Tractor');
         $area = $Name_Area;
+
+        // Ambil data, lalu sort di PHP berdasarkan angka 3-digit di akhir
         $procedures = Procedure::where('Name_Tractor', $Name_Tractor)
             ->where('Name_Area', $Name_Area)
-            ->orderBy('Name_Procedure', 'asc')
-            ->get();
+            ->get()
+            ->sortBy(function ($item) {
+                $name = $item->Name_Procedure;
+
+                // Pola 1: "AI - MF1640 - 001"
+                if (preg_match('/-\s*(\d{1,3})\s*$/', $name, $matches)) {
+                    return (int) $matches[1];
+                }
+
+                // Pola 2: "SF POIN 10 ..."
+                if (preg_match('/\b(\d+)\b/', $name, $matches)) {
+                    return (int) $matches[1];
+                }
+
+                return 999999;
+            })
+            ->values(); // reset index array
+
         return view('procedures.procedures', compact('page', 'tractor', 'photoTractor', 'area', 'procedures'));
     }
 
@@ -317,7 +332,7 @@ class ProcedureController extends Controller
     {
         $request->validate([
             'File_Procedure.*' => 'nullable|mimes:pdf',
-            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:512000', // max 100MB
+            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:512000',
             'Name_Tractor' => 'required',
             'Name_Area' => 'required',
         ]);
@@ -325,27 +340,22 @@ class ProcedureController extends Controller
         $tractor = $request->Name_Tractor;
         $area = $request->Name_Area;
 
-        // Simpan file PDF
-        if ($request->hasFile('File_Procedure')) {
+        // Buat folder prosedur jika belum ada
+        $baseFolder = "procedures/$tractor/$area";
+        Storage::disk('public')->makeDirectory($baseFolder);
+
+        $hasPdf = $request->hasFile('File_Procedure');
+        $hasVideo = $request->hasFile('Video_Procedure');
+
+        // 1. Proses file PDF (jika ada)
+        if ($hasPdf) {
             foreach ($request->file('File_Procedure') as $file) {
                 $originalName = $file->getClientOriginalName();
                 $nameProcedure = pathinfo($originalName, PATHINFO_FILENAME);
                 $filename = $originalName;
-                $path = 'procedures/' . $tractor . '/' . $area;
 
-                // Definisi video path dulu
-                $videopathProcedure = null;
-                if ($request->hasFile('Video_Procedure')) {
-                    $video = $request->file('Video_Procedure');
-                    $videoName = sanitizeFileName($video->getClientOriginalName());
-                    $videoFolder = 'procedures/' . $tractor . '/' . $area;
-                    $video->storeAs($videoFolder, $videoName, 'public');
-                    $videopathProcedure = $videoFolder . '/' . $videoName;
-                }
-                // Simpan file PDF
-                $file->storeAs($path, $filename, 'public');
+                $file->storeAs($baseFolder, $filename, 'public');
 
-                // Insert atau update data di database
                 DB::table('procedures')->updateOrInsert(
                     [
                         'Name_Tractor' => $tractor,
@@ -353,32 +363,53 @@ class ProcedureController extends Controller
                         'Name_Procedure' => $nameProcedure
                     ],
                     [
-                        'Video_Path_Procedure' => $videopathProcedure, // jangan salah nama
+                        'Video_Path_Procedure' => null // akan diisi nanti jika ada video
                     ]
                 );
             }
         }
 
-        // Simpan file video
-        if ($request->hasFile('Video_Procedure')) {
+        // 2. Proses video (jika ada)
+        $videoPath = null;
+        if ($hasVideo) {
             $video = $request->file('Video_Procedure');
             $videoName = sanitizeFileName($video->getClientOriginalName());
-            $videoPath = 'procedures/' . $tractor . '/' . $area . '/' . $videoName;
-            $video->storeAs('procedures/' . $tractor . '/' . $area, $videoName, 'public');
+            $video->storeAs($baseFolder, $videoName, 'public');
+            $videoPath = "$baseFolder/$videoName";
 
             $nameProcedureFromVideo = pathinfo($videoName, PATHINFO_FILENAME);
 
-            DB::table('procedures')
-                ->where('Name_Tractor', $tractor)
-                ->where('Name_Area', $area)
-                ->where('Name_Procedure', $nameProcedureFromVideo)
-                ->update(['Video_Path_Procedure' => $videoPath]);
+            // Jika tidak ada PDF, tapi ada video → buat entri baru
+            if (!$hasPdf) {
+                DB::table('procedures')->updateOrInsert(
+                    [
+                        'Name_Tractor' => $tractor,
+                        'Name_Area' => $area,
+                        'Name_Procedure' => $nameProcedureFromVideo
+                    ],
+                    [
+                        'Video_Path_Procedure' => $videoPath
+                    ]
+                );
+            } else {
+                // Jika ada PDF, update entri yang sesuai dengan nama video (jika cocok)
+                DB::table('procedures')
+                    ->where('Name_Tractor', $tractor)
+                    ->where('Name_Area', $area)
+                    ->where('Name_Procedure', $nameProcedureFromVideo)
+                    ->update(['Video_Path_Procedure' => $videoPath]);
+            }
+        }
+
+        // Jika TIDAK ADA PDF dan TIDAK ADA VIDEO → error (karena tidak ada data yang bisa disimpan)
+        if (!$hasPdf && !$hasVideo) {
+            return back()->withErrors(['Harap unggah setidaknya satu file PDF atau video.']);
         }
 
         return redirect()->route('procedure.procedure.index', [
             'Name_Tractor' => $tractor,
             'Name_Area' => $area
-        ])->with('success', 'Prosedur dan video berhasil ditambahkan atau diperbarui');
+        ])->with('success', 'Prosedur dan/atau video berhasil ditambahkan atau diperbarui');
     }
 
     public function update_procedure(Request $request, string $Id_Procedure)

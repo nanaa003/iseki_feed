@@ -283,16 +283,34 @@ class UserProcedureController extends Controller
             ->with('success','Data dan folder berhasil dihapus');
     }
 
-    public function index_procedure($Name_Tractor, $Name_Area){
-        $page = "userprocedure";
-
+    public function index_procedure($Name_Tractor, $Name_Area)
+    {
+        $page = "procedure";
         $tractor = $Name_Tractor;
         $photoTractor = Tractor::where('Name_Tractor', $Name_Tractor)->value('Photo_Tractor');
         $area = $Name_Area;
+
+        // Ambil data, lalu sort di PHP berdasarkan angka 3-digit di akhir
         $procedures = Procedure::where('Name_Tractor', $Name_Tractor)
             ->where('Name_Area', $Name_Area)
-            ->orderBy('Name_Procedure', 'asc')
-            ->get();
+            ->get()
+            ->sortBy(function ($item) {
+                $name = $item->Name_Procedure;
+
+                // Pola 1: "AI - MF1640 - 001"
+                if (preg_match('/-\s*(\d{1,3})\s*$/', $name, $matches)) {
+                    return (int) $matches[1];
+                }
+
+                // Pola 2: "SF POIN 10 ..."
+                if (preg_match('/\b(\d+)\b/', $name, $matches)) {
+                    return (int) $matches[1];
+                }
+
+                return 999999;
+            })
+            ->values(); // reset index array
+
         return view('userprocedures.procedures', compact('page', 'tractor', 'photoTractor', 'area', 'procedures'));
     }
 
