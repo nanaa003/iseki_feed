@@ -10,6 +10,18 @@ use App\Models\Tractor;
 use App\Models\Area;
 use App\Models\Procedure;
 use App\Models\User;
+use Illuminate\Support\Str;
+
+function sanitizeFileName($name)
+{
+    // Ambil ekstensi
+    $extension = pathinfo($name, PATHINFO_EXTENSION);
+    // Ambil nama tanpa ekstensi & sanitize
+    $basename = pathinfo($name, PATHINFO_FILENAME);
+    $clean = preg_replace('/[^a-zA-Z0-9._-]/', '_', $basename); // hanya izinkan alfanumerik, titik, underscore, dash
+    $clean = trim($clean, '_');
+    return $clean . '.' . $extension;
+}
 
 class ProcedureController extends Controller
 {
@@ -305,7 +317,7 @@ class ProcedureController extends Controller
     {
         $request->validate([
             'File_Procedure.*' => 'nullable|mimes:pdf',
-            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:51200', // max 50MB
+            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:512000', // max 100MB
             'Name_Tractor' => 'required',
             'Name_Area' => 'required',
         ]);
@@ -325,13 +337,9 @@ class ProcedureController extends Controller
                 $videopathProcedure = null;
                 if ($request->hasFile('Video_Procedure')) {
                     $video = $request->file('Video_Procedure');
-                    $videoName = uniqid('video_') . '.' . $video->getClientOriginalExtension();
+                    $videoName = sanitizeFileName($video->getClientOriginalName());
                     $videoFolder = 'procedures/' . $tractor . '/' . $area;
-
-                    // Simpan video
                     $video->storeAs($videoFolder, $videoName, 'public');
-
-                    // Path untuk database
                     $videopathProcedure = $videoFolder . '/' . $videoName;
                 }
                 // Simpan file PDF
@@ -354,23 +362,17 @@ class ProcedureController extends Controller
         // Simpan file video
         if ($request->hasFile('Video_Procedure')) {
             $video = $request->file('Video_Procedure');
-            $videoName = uniqid('video_') . '.' . $video->getClientOriginalExtension();
+            $videoName = sanitizeFileName($video->getClientOriginalName());
             $videoPath = 'procedures/' . $tractor . '/' . $area . '/' . $videoName;
-
-            // Simpan video di storage/public/procedures/{tractor}/{area}/
             $video->storeAs('procedures/' . $tractor . '/' . $area, $videoName, 'public');
 
-            // Update kolom Video_Path_Procedure di database
-            // Jika ingin menambahkan video ke procedure yang sudah ada dengan nama sama seperti file PDF:
-            $nameProcedureFromVideo = pathinfo($video->getClientOriginalName(), PATHINFO_FILENAME);
+            $nameProcedureFromVideo = pathinfo($videoName, PATHINFO_FILENAME);
 
             DB::table('procedures')
                 ->where('Name_Tractor', $tractor)
                 ->where('Name_Area', $area)
                 ->where('Name_Procedure', $nameProcedureFromVideo)
-                ->update([
-                    'Video_Path_Procedure' => $videoPath
-                ]);
+                ->update(['Video_Path_Procedure' => $videoPath]);
         }
 
         return redirect()->route('procedure.procedure.index', [
@@ -397,7 +399,7 @@ class ProcedureController extends Controller
             'Name_Tractor' => 'required',
             'Name_Area' => 'required',
             'Name_Procedure' => 'required',
-            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:51200' // max 50MB
+            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:512000' // max 50MB
         ], [
             'Name_Tractor.required' => 'Nama tractor wajib diisi',
             'Name_Area.required' => 'Nama area wajib diisi',
@@ -426,13 +428,11 @@ class ProcedureController extends Controller
         // Jika ada video baru diupload
         if ($request->hasFile('Video_Procedure')) {
             $video = $request->file('Video_Procedure');
-            $videoName = uniqid('video_') . '.' . $video->getClientOriginalExtension();
+            $videoName = sanitizeFileName($video->getClientOriginalName());
             $videoDir = 'procedures/' . $newNameTractor . '/' . $newNameArea;
             $video->storeAs($videoDir, $videoName, 'public');
-
             $newVideoPath = $videoDir . '/' . $videoName;
 
-            // Hapus video lama jika ada
             if ($oldVideoPath && Storage::disk('public')->exists($oldVideoPath)) {
                 Storage::disk('public')->delete($oldVideoPath);
             }
@@ -463,15 +463,18 @@ class ProcedureController extends Controller
                 Storage::disk('public')->move($oldPdfPath, $newPdfPath);
             }
 
-            // Rename video jika ada dan video sebelumnya disimpan
-            if ($oldVideoPath && Storage::disk('public')->exists($oldVideoPath)) {
-                $videoExt = pathinfo($oldVideoPath, PATHINFO_EXTENSION);
-                $newVideoFilePath = $newDir . '/' . $newNameProcedure . '.' . $videoExt;
-                Storage::disk('public')->move($oldVideoPath, $newVideoFilePath);
-
-                // Update path di DB
-                DB::table('procedures')->where('Id_Procedure', $Id_Procedure)
-                    ->update(['Video_Path_Procedure' => $newVideoFilePath]);
+            // Hapus blok rename video lama, ganti dengan:
+            if ($oldNameTractor !== $newNameTractor || $oldNameArea !== $newNameArea) {
+                // Hanya pindahkan folder, biarkan nama file video tetap
+                if ($oldVideoPath && Storage::disk('public')->exists($oldVideoPath)) {
+                    $videoFilename = basename($oldVideoPath);
+                    $newVideoDir = 'procedures/' . $newNameTractor . '/' . $newNameArea;
+                    Storage::disk('public')->makeDirectory($newVideoDir);
+                    $newVideoPath = $newVideoDir . '/' . $videoFilename;
+                    Storage::disk('public')->move($oldVideoPath, $newVideoPath);
+                    DB::table('procedures')->where('Id_Procedure', $Id_Procedure)
+                        ->update(['Video_Path_Procedure' => $newVideoPath]);
+                }
             }
         }
 
@@ -484,7 +487,7 @@ class ProcedureController extends Controller
         // Validasi file PDF wajib, video opsional
         $request->validate([
             'File_Procedure' => 'required|mimes:pdf',
-            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:51200' // max 50MB
+            'Video_Procedure' => 'nullable|mimes:mp4,mov,webm|max:512000' // max 50MB
         ]);
 
         // Ambil data procedure
@@ -509,11 +512,10 @@ class ProcedureController extends Controller
         // Simpan video jika ada, timpa video lama
         if ($request->hasFile('Video_Procedure')) {
             $video = $request->file('Video_Procedure');
-            $videoName = $nameProcedure . '.' . $video->getClientOriginalExtension();
+            $videoName = sanitizeFileName($video->getClientOriginalName());
             $videoPath = $folderPath . '/' . $videoName;
             Storage::disk('public')->putFileAs($folderPath, $video, $videoName);
 
-            // Update path video di DB
             DB::table('procedures')->where('Id_Procedure', $Id_Procedure)
                 ->update(['Video_Path_Procedure' => $videoPath]);
         }

@@ -77,7 +77,7 @@
                                 <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">
                                     Procedure</th>
                                 <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">
-                                    Video</th>
+                                    Video Checksheet</th>
                                 <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7"
                                     style="width: 15%">Action</th>
                             </tr>
@@ -116,7 +116,7 @@
                                         @if ($p->Video_Path_Procedure)
                                             <a href="{{ asset('storage/' . $p->Video_Path_Procedure) }}" target="_blank"
                                                 class="text-primary">
-                                                Watch Video
+                                                {{ basename($p->Video_Path_Procedure) }}
                                             </a>
                                         @else
                                             <span class="text-secondary">No Video</span>
@@ -230,10 +230,10 @@
                             <input type="file" class="form-control" name="Video_Procedure" accept="video/*">
                         </div>
                     </div>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                        </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
                 </form>
             </div>
         </div>
@@ -262,8 +262,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Delete</button>
-                        <button type="button" class="btn btn-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -356,8 +355,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-primary">Submit</button>
-                        <button type="button" class="btn btn btn-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -373,7 +371,23 @@
     <script src="{{ asset('assets/js/jquery-3.7.1.min.js') }}"></script>
     <script src="{{ asset('assets/datatables/datatables.min.js') }}"></script>
     <script>
-        new DataTable('#example');
+        // new DataTable('#example');
+        $(document).ready(function() {
+            var table;
+
+            if ($.fn.DataTable.isDataTable('#example')) {
+                table = $('#example').DataTable();
+                table.page.len(100).draw(); // ✅ paksa default 100
+            } else {
+                table = $('#example').DataTable({
+                    pageLength: 100,
+                    lengthMenu: [
+                        [10, 25, 50, 100, -1],
+                        [10, 25, 50, 100, "All"]
+                    ]
+                });
+            }
+        });
     </script>
     <script>
         function setEdit(data) {
