@@ -3,17 +3,35 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\File;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Ambil semua file video di folder storage/app/uploads
-        $videoFiles = collect(File::files(public_path('storage/uploads')))
-            ->map(fn($file) => 'storage/uploads/' . $file->getFilename());
+        $uploadPath = public_path('storage/uploads');
 
-        return view('home', ['videos' => $videoFiles]);
+        if (!File::exists($uploadPath)) {
+            $videos = collect();
+        } else {
+            $files = File::files($uploadPath);
+
+            $filenames = collect($files)
+                ->map(fn($file) => $file->getFilename())
+                ->filter(fn($filename) => in_array(
+                    strtolower(pathinfo($filename, PATHINFO_EXTENSION)),
+                    ['mp4', 'webm', 'ogg']
+                ))
+                ->all();
+
+            // Urutkan secara natural
+            natsort($filenames);
+            $filenames = array_values($filenames); // ← reset index numerik
+
+            $videos = collect($filenames)
+                ->map(fn($filename) => 'storage/uploads/' . $filename);
+        }
+
+        return view('home', ['videos' => $videos]); // pastikan nama view sesuai
     }
 }

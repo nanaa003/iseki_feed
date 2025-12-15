@@ -96,7 +96,7 @@
                                         @if ($p->Video_Path_Procedure)
                                             <a href="{{ asset('storage/' . $p->Video_Path_Procedure) }}" target="_blank"
                                                 class="text-primary">
-                                                Watch Video
+                                                {{ basename($p->Video_Path_Procedure) }}
                                             </a>
                                         @else
                                             <span class="text-secondary">No Video</span>
@@ -261,8 +261,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="submit" class="btn bg-gradient-primary">Update</button>
-                        <button type="button" class="btn bg-gradient-secondary"
-                            data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn bg-gradient-secondary" data-bs-dismiss="modal">Cancel</button>
                     </div>
                 </form>
             </div>

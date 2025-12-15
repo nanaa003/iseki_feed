@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Upload;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UploadController extends Controller
 {
@@ -12,10 +13,10 @@ class UploadController extends Controller
     public function index()
     {
         $uploads = Upload::all();
-        return view('uploads', compact('uploads')); // disesuaikan dengan view baru
+        return view('uploads', compact('uploads'));
     }
 
-    // Form tambah video
+    // Form tambah video (opsional, bisa digabung dengan index)
     public function create()
     {
         return view('uploads');
@@ -24,28 +25,36 @@ class UploadController extends Controller
     // Simpan video baru
     public function store(Request $request)
     {
-        // dd(ini_get('upload_max_filesize'), ini_get('post_max_size'));
-        // dd($request->all());
-
         $request->validate([
             'video' => 'required|mimes:mp4,mov,avi,wmv,flv,webm|max:2048000', // 2GB
-            'desc' => 'required|string',
+            'desc' => 'required|string|max:255',
         ]);
 
-        $path = $request->file('video')->store('uploads', 'public');
+        $file = $request->file('video');
+
+        // Ambil dan bersihkan nama file asli
+        $cleanName = $this->sanitizeFilename(
+            pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)
+        );
+        $extension = $file->getClientOriginalExtension();
+
+        $filename = $cleanName . '.' . $extension;
+
+        // Simpan dengan nama asli yang aman
+        $path = $file->storeAs('uploads', $filename, 'public');
 
         Upload::create([
             'Video_Path_Upload' => $path,
             'Desc_Upload' => $request->desc,
         ]);
-        
+
         return redirect()->route('uploads')->with('success', 'Video berhasil ditambahkan!');
     }
 
     // Form edit video
     public function edit($id)
     {
-        $upload = Upload::findOrFail($id); // typo sebelumnya: Uploads
+        $upload = Upload::findOrFail($id);
         return view('uploads', compact('upload'));
     }
 
@@ -56,7 +65,7 @@ class UploadController extends Controller
 
         $request->validate([
             'video' => 'nullable|mimes:mp4,mov,avi,wmv,flv,webm|max:2048000',
-            'desc' => 'required|string',
+            'desc' => 'required|string|max:255',
         ]);
 
         $videoPath = $upload->Video_Path_Upload;
@@ -66,16 +75,22 @@ class UploadController extends Controller
                 return back()->withErrors(['video' => $request->file('video')->getErrorMessage()]);
             }
 
-            // hapus file lama
+            // Hapus file lama jika ada
             if ($videoPath && Storage::disk('public')->exists($videoPath)) {
                 Storage::disk('public')->delete($videoPath);
             }
 
-            // simpan file baru
-            $videoPath = $request->file('video')->store('uploads', 'public');
+            // Simpan file baru dengan nama asli yang dibersihkan
+            $file = $request->file('video');
+            $cleanName = $this->sanitizeFilename(
+                pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME)
+            );
+            $extension = $file->getClientOriginalExtension();
+            $filename = $cleanName . '.' . $extension;
+
+            $videoPath = $file->storeAs('uploads', $filename, 'public');
         }
 
-        // update database
         $upload->update([
             'Video_Path_Upload' => $videoPath,
             'Desc_Upload' => $request->desc,
@@ -89,12 +104,36 @@ class UploadController extends Controller
     {
         $upload = Upload::findOrFail($id);
 
-        if (Storage::disk('public')->exists($upload->Video_Path_Upload)) {
+        // Hapus file fisik jika ada
+        if ($upload->Video_Path_Upload && Storage::disk('public')->exists($upload->Video_Path_Upload)) {
             Storage::disk('public')->delete($upload->Video_Path_Upload);
         }
 
-        $upload->delete(); // sebelumnya typo: $uploads->delete();
+        $upload->delete();
 
         return redirect()->route('uploads')->with('success', 'Video berhasil dihapus!');
+    }
+
+    /**
+     * Membersihkan nama file agar aman untuk sistem file.
+     *
+     * Mengganti karakter non-alfanumerik (kecuali _ dan -) dengan underscore,
+     * membatasi panjang, dan menghindari underscore berulang.
+     */
+    private function sanitizeFilename(string $filename): string
+    {
+        // Hanya izinkan huruf, angka, underscore, dash
+        $clean = preg_replace('/[^A-Za-z0-9_\-]/', '_', $filename);
+        // Batasi panjang (100 karakter sebelum ekstensi)
+        $clean = substr($clean, 0, 100);
+        // Ganti multiple underscore jadi satu
+        $clean = preg_replace('/_+/', '_', $clean);
+        // Hapus underscore di awal/akhir
+        $clean = trim($clean, '_-');
+        // Jika jadi kosong, beri nama default
+        if ($clean === '') {
+            $clean = 'video_' . time();
+        }
+        return $clean;
     }
 }

@@ -17,6 +17,7 @@
     /* Tabel header */
     #uploads .table-primary th {
         background-color: #ffd6e0;
+        
         color: #000;
     }
 </style>
