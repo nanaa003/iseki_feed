@@ -54,18 +54,15 @@
             <hr class="divider mb-5" />
 
             
-            @forelse ($videos as $video)
+            @forelse ($videos as $videoPath)
                 <div class="d-flex justify-content-center mb-5">
                     <div class="w-100" style="max-width: 1000px;">
                         <div class="card shadow-lg rounded-lg overflow-hidden">
                             <div class="ratio ratio-16x9">
                                 <video class="w-100 h-100" controls poster="{{ asset('images/placeholder.jpg') }}">
-                                    <source src="{{ asset('storage/' . $video->Video_Path_Upload) }}" type="video/mp4">
-                                    Video "{{ $video->Desc_Upload }}" tidak dapat dimuat.
+                                    <source src="{{ asset($videoPath) }}" type="video/mp4">
+                                    Browser tidak mendukung video.
                                 </video>
-                            </div>
-                            <div class="card-body text-center py-2">
-                                <small class="text-muted">{{ $video->Desc_Upload }}</small>
                             </div>
                         </div>
                     </div>
@@ -75,6 +72,7 @@
                     <p class="text-muted">Belum ada video untuk ditampilkan.</p>
                 </div>
             @endforelse
+
         </div>
     </section>
 @endsection
