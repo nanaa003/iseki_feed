@@ -6,19 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="" />
     <meta name="author" content="" />
-    <title>ISEKI_FEED</title>
+    <title>Innovation Feed</title>
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
     <!-- Bootstrap Icons-->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
-    <!-- Google fonts-->
-    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
+    <link href="{{ asset('assets/css/bootstrap-icons.css') }}" rel="stylesheet" />
+
+    <!-- Google Fonts-->
+    {{-- <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic"
-        rel="stylesheet" type="text/css" />
-    <!-- SimpleLightbox plugin CSS-->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.css" rel="stylesheet" />
-    <!-- Core theme CSS (includes Bootstrap)-->
-    <link href="css/styles.css" rel="stylesheet" />
+        rel="stylesheet" type="text/css" /> --}}
+
+    <!-- SimpleLightbox CSS -->
+    <link href={{ asset('assets/css/simpleLightbox.min.css') }} rel="stylesheet" />
+
+    <!-- Core Theme CSS (Bootstrap + custom) -->
+    <link href="{{ asset('assets/css/styles.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ asset('assets/css/icon.css') }}" />
 </head>
 
 <body id="page-top" style="background-color: #FFEAEA;">
@@ -52,22 +56,6 @@
                             </div>
                         </div>
 
-                        <!-- Submit success message-->
-                        <div class="d-none" id="submitSuccessMessage">
-                            <div class="text-center mb-3">
-                                <div class="fw-bolder">Form submission successful!</div>
-                                To activate this form, sign up at
-                                <br />
-                                <a
-                                    href="https://startbootstrap.com/solution/contact-forms">https://startbootstrap.com/solution/contact-forms</a>
-                            </div>
-                        </div>
-
-                        <!-- Submit error message-->
-                        <div class="d-none" id="submitErrorMessage">
-                            <div class="text-center text-danger mb-3">Error sending message!</div>
-                        </div>
-
                         <!-- Submit Button-->
                         <div class="d-grid">
                             <button class="btn btn-primary btn-xl disabled" id="submitButton"
@@ -81,17 +69,25 @@
     <!-- Footer-->
     <footer class="bg-light py-5">
         <div class="container px-4 px-lg-5">
-            <div class="small text-center text-muted">Copyright &copy; 2023 - Company Name</div>
+            <p class="text-dark my-4 text-sm font-weight-normal">
+                ©
+                <script>
+                    document.write(new Date().getFullYear())
+                </script>,
+                <span class="text-primary">PT. Iseki Indonesia</p>
         </div>
     </footer>
-    <!-- Bootstrap core JS-->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SimpleLightbox plugin JS-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/SimpleLightbox/2.1.0/simpleLightbox.min.js"></script>
-    <!-- Core theme JS-->
-    <script src="js/scripts.js"></script>
-    <!-- SB Forms JS-->
-    <script src="https://cdn.startbootstrap.com/sb-forms-latest.js"></script>
+    <!-- Bootstrap core JS -->
+    <script src="{{ asset('assets/js/bootstrap.bundle.min.js') }}"></script>
+
+    <!-- SimpleLightbox JS -->
+    <script src="{{ asset('assets/js/simpleLightbox.min.js') }}"></script>
+
+    <!-- Core theme JS -->
+    <script src="{{ asset('assets/js/scripts.js') }}"></script>
+
+    <!-- SB Forms JS -->
+    <script src="{{ asset('assets/js/sb-forms-0.4.1.js') }}"></script>
 </body>
 
 </html>

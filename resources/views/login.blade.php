@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta name="description" content="ISEKI Feed TV - Menampilkan produk-produk ISEKI di lobby" />
     <meta name="author" content="ISEKI" />
-    <title>ISEKI_FEED</title>
+    <title>Innovation Feed</title>
 
     <!-- Favicon-->
     <link rel="icon" type="image/x-icon" href="{{ asset('assets/favicon.ico') }}" />
@@ -68,7 +68,13 @@
     <!-- Footer-->
     <footer class="bg-light py-5">
         <div class="container px-4 px-lg-5">
-            <div class="small text-center text-muted">Copyright &copy; 2025 - Company Name</div>
+            <div class="small text-center text-muted">
+                ©
+                <script>
+                    document.write(new Date().getFullYear())
+                </script>,
+                <span class="text-primary">PT. Iseki Indonesia</span>
+            </div>
         </div>
     </footer>
     <!-- Bootstrap core JS -->
