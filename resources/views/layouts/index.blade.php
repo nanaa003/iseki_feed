@@ -44,6 +44,10 @@
             </div>
         </div>
     </nav>
+
+    <!-- Dynamic Favicon -->
+    <script src="/iseki_pro_app/js/dynamic-favicon.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", function() { setDynamicFavicon("photo_frame", "Innovation"); });</script>
 </head>
 
 

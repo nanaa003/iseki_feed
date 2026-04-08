@@ -23,6 +23,10 @@
     <!-- Core Theme CSS (Bootstrap + custom) -->
     <link href="{{ asset('assets/css/styles.css') }}" rel="stylesheet" />
     <link rel="stylesheet" href="{{ asset('assets/css/icon.css') }}" />
+
+    <!-- Dynamic Favicon -->
+    <script src="/iseki_pro_app/js/dynamic-favicon.js"></script>
+    <script>document.addEventListener("DOMContentLoaded", function() { setDynamicFavicon("photo_frame", "Innovation"); });</script>
 </head>
 
 <body id="page-top" style="background-color: #FFEAEA;">
