@@ -209,7 +209,7 @@
         function setEdit(data) {
             // Set form action
             const form = document.getElementById('editForm');
-            form.action = 'http://192.168.173.207/iseki_feed/public/procedure/tractor/area/update/' + data.Id_Area; // Sesuaikan route-mu
+            form.action = 'http://192.168.173.201/iseki_feed/public/procedure/tractor/area/update/' + data.Id_Area; // Sesuaikan route-mu
 
             // Isi data
             document.getElementById('edit-tractor').value = data.Name_Tractor;
@@ -227,7 +227,7 @@
 
             // Set action form
             const form = document.getElementById('deleteForm');
-            form.action = `http://192.168.173.207/iseki_feed/public/procedure/tractor/area/delete/${data.Id_Area}`; // Sesuaikan dengan rute sebenarnya jika beda
+            form.action = `http://192.168.173.201/iseki_feed/public/procedure/tractor/area/delete/${data.Id_Area}`; // Sesuaikan dengan rute sebenarnya jika beda
         }
     </script>
 @endsection
