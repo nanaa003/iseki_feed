@@ -115,7 +115,8 @@
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background:#FFF;">
                     <div class="ratio ratio-16x9">
                         <video controls poster="{{ asset('images/placeholder.svg') }}">
-                            <source src="{{ asset($videoPath) }}" type="video/mp4">
+                            <source src="{{ asset('storage/' . $videoPath) }}" type="video/mp4">
+                            Browser tidak mendukung video.
                         </video>
                     </div>
                 </div>
