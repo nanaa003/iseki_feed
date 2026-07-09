@@ -41,9 +41,6 @@
 
     <div class="container text-center mt-3">
         <h3 class="display-4 fw-bold" style="font-family:'Playfair Display',serif;color:#4A2E2E;">Welcome to ISEKI</h3>
-        <p class="lead text-muted mb-4" style="color:#8B6F6F !important;max-width:600px;margin:0 auto 1.5rem;">
-            Teknologi & inovasi pertanian modern terbaik di kelasnya
-        </p>
         <a class="btn btn-primary btn-lg px-5 rounded-pill" href="#services">
             <i class="bi bi-play-circle-fill me-2"></i>Lihat Produk
         </a>
@@ -69,7 +66,7 @@
                 <div class="card border-0 shadow-sm rounded-4 overflow-hidden" style="background:#FFF;">
                     <div class="ratio ratio-16x9">
                         <video controls poster="{{ asset('images/placeholder.svg') }}">
-                            <source src="{{ asset($videoPath) }}" type="video/mp4">
+                            <source src="{{ asset('storage/' . $videoPath) }}" type="video/mp4">
                             Browser tidak mendukung video.
                         </video>
                     </div>
