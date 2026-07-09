@@ -11,29 +11,9 @@ class AdminHomeController extends Controller
 {
     public function index()
     {
-        $uploadPath = public_path('storage/uploads');
+        $videos = \App\Models\Upload::orderBy('Order_Upload', 'asc')
+                    ->pluck('Video_Path_Upload');
 
-        if (!File::exists($uploadPath)) {
-            $videos = collect();
-        } else {
-            $files = File::files($uploadPath);
-
-            $filenames = collect($files)
-                ->map(fn($file) => $file->getFilename())
-                ->filter(fn($filename) => in_array(
-                    strtolower(pathinfo($filename, PATHINFO_EXTENSION)),
-                    ['mp4', 'webm', 'ogg']
-                ))
-                ->all();
-
-            // Urutkan secara natural
-            natsort($filenames);
-            $filenames = array_values($filenames); // ← reset index numerik
-
-            $videos = collect($filenames)
-                ->map(fn($filename) => 'storage/uploads/' . $filename);
-        }
-
-        return view('adminhome', ['videos' => $videos]); // pastikan nama view sesuai
+        return view('adminhome', ['videos' => $videos]);
     }
 }

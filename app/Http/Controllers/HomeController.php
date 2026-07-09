@@ -9,29 +9,19 @@ class HomeController extends Controller
 {
     public function index()
     {
-        $uploadPath = public_path('storage/uploads');
+        // Fetch videos directly from database, ordered by Order_Upload
+        $videos = \App\Models\Upload::orderBy('Order_Upload', 'asc')
+                    ->pluck('Video_Path_Upload');
 
-        if (!File::exists($uploadPath)) {
-            $videos = collect();
-        } else {
-            $files = File::files($uploadPath);
+        return view('home', ['videos' => $videos]);
+    }
 
-            $filenames = collect($files)
-                ->map(fn($file) => $file->getFilename())
-                ->filter(fn($filename) => in_array(
-                    strtolower(pathinfo($filename, PATHINFO_EXTENSION)),
-                    ['mp4', 'webm', 'ogg']
-                ))
-                ->all();
+    public function lobby()
+    {
+        // Fetch videos directly from database, ordered by Order_Upload
+        $videos = \App\Models\Upload::orderBy('Order_Upload', 'asc')
+                    ->pluck('Video_Path_Upload');
 
-            // Urutkan secara natural
-            natsort($filenames);
-            $filenames = array_values($filenames); // ← reset index numerik
-
-            $videos = collect($filenames)
-                ->map(fn($filename) => 'storage/uploads/' . $filename);
-        }
-
-        return view('home', ['videos' => $videos]); // pastikan nama view sesuai
+        return view('lobby', ['videos' => $videos]);
     }
 }

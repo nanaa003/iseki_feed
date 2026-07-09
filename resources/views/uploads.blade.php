@@ -1,24 +1,30 @@
 @extends('layouts.admin')
 @section('content')
 <style>
-    /* Background soft pink untuk section video */
     #uploads {
-        background-color: #fff0f5; /* pink sangat soft */
-        padding: 60px 0;
+        background-color: #FBEFEF;
+        padding: 100px 0;
     }
 
-    /* Card di atas background pink tetap terlihat */
     #uploads .card {
         background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(196,122,122,0.1);
+        border: none;
     }
 
-    /* Tabel header */
     #uploads .table-primary th {
-        background-color: #ffd6e0;
-        
-        color: #000;
+        background-color: #C47A7A;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .table-bordered td, .table-bordered th {
+        border-color: #F9DFDF;
     }
 </style>
 
@@ -43,19 +49,25 @@
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-hover datatable mb-0">
-                        <thead class="table-primary">
+                    <table class="table table-bordered table-hover mb-0" id="playlistTable">
+                        <thead class="table-primary text-center">
                             <tr>
-                                <th style="width:5%">No</th>
+                                <th style="width:10%">Urutan</th>
                                 <th style="width:35%">Video</th>
                                 <th>Keterangan</th>
                                 <th style="width:20%">Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="sortable-list">
                             @forelse($uploads as $index => $upload)
-                                <tr>
-                                    <td>{{ $index + 1 }}</td>
+                                <tr data-id="{{ $upload->Id_Upload }}" class="align-middle">
+                                    <td class="text-center">
+                                        <div class="d-flex flex-column align-items-center gap-1">
+                                            <button type="button" class="btn btn-sm btn-light border" onclick="moveRow(this, -1)" title="Naikkan"><i class="bi bi-chevron-up"></i></button>
+                                            <span class="badge bg-soft-pink text-pink order-label">{{ $index + 1 }}</span>
+                                            <button type="button" class="btn btn-sm btn-light border" onclick="moveRow(this, 1)" title="Turunkan"><i class="bi bi-chevron-down"></i></button>
+                                        </div>
+                                    </td>
                                     <td>
                                         <video width="250" controls class="rounded">
                                             <source src="{{ asset('storage/' . $upload->Video_Path_Upload) }}" type="video/mp4">
@@ -158,23 +170,78 @@
     </div>
 </div>
 
-<!-- Script untuk modal edit -->
 <script>
-    var editUploadModal = document.getElementById('editUploadModal');
-    editUploadModal.addEventListener('show.bs.modal', function(event) {
+    function moveRow(btn, direction) {
+        const row = btn.closest('tr');
+        const tbody = row.parentNode;
+        
+        if (direction === -1 && row.previousElementSibling) {
+            tbody.insertBefore(row, row.previousElementSibling);
+        } else if (direction === 1 && row.nextElementSibling) {
+            tbody.insertBefore(row.nextElementSibling, row);
+        } else {
+            return; // Nothing to move
+        }
+        
+        updateOrderLabels();
+        saveOrder();
+    }
+
+    function updateOrderLabels() {
+        const rows = document.querySelectorAll('#sortable-list tr');
+        rows.forEach((row, index) => {
+            const label = row.querySelector('.order-label');
+            if (label) label.textContent = index + 1;
+        });
+    }
+
+    function saveOrder() {
+        const rows = document.querySelectorAll('#sortable-list tr');
+        const orderData = [];
+        rows.forEach((row, index) => {
+            const id = row.getAttribute('data-id');
+            if (id) {
+                orderData.push({ id: id, order: index + 1 });
+            }
+        });
+
+        fetch("{{ route('uploads.reorder') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}"
+            },
+            body: JSON.stringify({ order: orderData })
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log('Urutan tersimpan');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
+    }
+
+    document.getElementById('editUploadModal').addEventListener('show.bs.modal', function (event) {
         var button = event.relatedTarget;
         var id = button.getAttribute('data-id');
-        var video = button.getAttribute('data-video');
         var name = button.getAttribute('data-name');
+        var videoPath = button.getAttribute('data-video');
 
         var form = document.getElementById('editUploadForm');
-        form.action = "{{ route('uploads.update', ':id') }}".replace(':id', id); // action sesuai route PUT /uploads/{id}/update
-
+        form.action = '/uploads/' + id;
         document.getElementById('editDesc').value = name;
 
-        var videoSrc = document.getElementById('currentVideoSrc');
-        videoSrc.src = "{{ asset('storage') }}/" + video;
-        document.getElementById('currentVideo').load();
+        var currentVideoSrc = document.getElementById('currentVideoSrc');
+        var currentVideo = document.getElementById('currentVideo');
+        
+        if (videoPath) {
+            currentVideoSrc.src = "{{ asset('storage/') }}/" + videoPath;
+            currentVideo.load();
+            document.getElementById('currentVideoContainer').style.display = 'block';
+        } else {
+            document.getElementById('currentVideoContainer').style.display = 'none';
+        }
     });
 </script>
 @endsection

@@ -2,56 +2,51 @@
 @section('content')
 
     <style>
-        /* Background soft pink untuk section video */
         #uploads {
-            background-color: #fff0f5;
-            /* pink sangat soft */
-            padding: 60px 0;
+            background-color: #FBEFEF;
+            padding: 80px 0;
         }
 
-        /* Card di atas background pink tetap terlihat */
         #uploads .card {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(196,122,122,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
         }
 
-        /* Tabel header */
+        #uploads .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(196,122,122,0.15);
+        }
+
         #uploads .table-primary th {
-            background-color: #ffd6e0;
-            color: #000;
-        }
-
-        #uploads .card-img-top {
-            width: 100%;
-            /* lebar penuh card */
-            height: 200px;
-            /* tinggi seragam, bisa disesuaikan */
-            object-fit: cover;
-            /* supaya gambar memenuhi area dan tetap proporsional */
-            border-top-left-radius: 12px;
-            /* agar radius card tetap sama */
-            border-top-right-radius: 12px;
+            background-color: #C47A7A;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
         }
 
         #uploads .card-img-top {
             width: 100%;
             height: 200px;
-            /* tinggi seragam */
             object-fit: contain;
-            /* gambar tidak terpotong */
-            background-color: #f0f0f0;
-            /* optional, biar ada latar saat ada padding */
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            background-color: #fcf8f8;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
         }
     </style>
 
-    <section class="page-section" id="uploads">
-        <div class="container px-4 px-lg-5 pt-5">
-            <h2 class="text-center mt-0">Procedure</h2>
-            <hr class="divider" />
-        </div>
+    <section class="section-premium" id="uploads" style="padding-top: 100px;">
+        <div class="container px-4 px-lg-5">
+            <div class="text-center mb-5">
+                <span class="badge-premium mb-3 d-inline-block">Browse</span>
+                <h2 class="section-title">Prosedur & Spesifikasi</h2>
+                <p class="text-muted">Pilih tipe traktor untuk melihat prosedur</p>
+            </div>
 
         <section class="pt-3 pb-4" id="count-stats">
             <div class="container">

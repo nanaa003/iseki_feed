@@ -9,10 +9,9 @@ use Illuminate\Support\Str;
 
 class UploadController extends Controller
 {
-    // Menampilkan semua video
     public function index()
     {
-        $uploads = Upload::all();
+        $uploads = Upload::orderBy('Order_Upload', 'asc')->get();
         return view('uploads', compact('uploads'));
     }
 
@@ -43,9 +42,12 @@ class UploadController extends Controller
         // Simpan dengan nama asli yang aman
         $path = $file->storeAs('uploads', $filename, 'public');
 
+        $maxOrder = Upload::max('Order_Upload') ?? 0;
+
         Upload::create([
             'Video_Path_Upload' => $path,
             'Desc_Upload' => $request->desc,
+            'Order_Upload' => $maxOrder + 1,
         ]);
 
         return redirect()->route('uploads')->with('success', 'Video berhasil ditambahkan!');
@@ -112,6 +114,20 @@ class UploadController extends Controller
         $upload->delete();
 
         return redirect()->route('uploads')->with('success', 'Video berhasil dihapus!');
+    }
+
+    // Reorder video (AJAX Endpoint)
+    public function reorder(Request $request)
+    {
+        $orderData = $request->input('order'); // format: [{id: 1, order: 1}, {id: 2, order: 2}]
+
+        if (is_array($orderData)) {
+            foreach ($orderData as $item) {
+                Upload::where('Id_Upload', $item['id'])->update(['Order_Upload' => $item['order']]);
+            }
+        }
+
+        return response()->json(['status' => 'success']);
     }
 
     /**

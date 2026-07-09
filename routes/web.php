@@ -14,6 +14,7 @@ use Illuminate\Contracts\Auth\UserProvider;
 
 // Home (bebas diakses tanpa login)
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/lobby', [HomeController::class, 'lobby'])->name('lobby');
 
 // Halaman login admin
 Route::get('/login', [AuthController::class, 'index'])->name('login');
@@ -45,6 +46,7 @@ Route::middleware([AuthAdmin::class])->group(function () {
 
     Route::get('/upload', [UploadController::class, 'index'])->name('upload');
     Route::get('/uploads', [UploadController::class, 'index'])->name('uploads');
+    Route::post('/uploads/reorder', [UploadController::class, 'reorder'])->name('uploads.reorder');
     Route::get('/uploads/create', [UploadController::class, 'create'])->name('uploads.create');
     Route::post('/uploads', [UploadController::class, 'store'])->name('uploads.store');
     Route::get('/uploads/{upload}/edit', [UploadController::class, 'edit'])->name('uploads.edit');

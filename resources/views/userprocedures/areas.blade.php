@@ -1,84 +1,59 @@
 @extends('layouts.index')
 @section('content')
-<header class="header-2">
-    <div class="page-header min-vh-35 relative" style="background-image: url('{{ asset('assets/img/bg10.jpg') }}')">
-        <span class="mask bg-gradient-dark opacity-4"></span>
-        <div class="container">
-            <div class="row">
-                <div class="col-12 mx-auto">
-                    <h3 class="text-white pt-3 mt-n2">Procedure</h3>
-                </div>
-            </div>
+<div class="section-premium" style="padding-top: 100px; padding-bottom: 40px; background-color: #FBEFEF;">
+    <div class="container">
+        <div class="text-center mb-5">
+            <span class="badge-premium mb-3 d-inline-block">{{ $tractor }}</span>
+            <h2 class="section-title">Area</h2>
+            <p class="text-muted" style="color: #8B6F6F !important;">Pilih area untuk melihat prosedur</p>
         </div>
     </div>
-</header>
+</div>
 
-<div class="card card-body blur shadow-blur mx-3 mx-md-4 mt-n6">
-
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-primary" href="{{ route('userprocedure') }}">Procedure</a></li>
-            <li class="breadcrumb-item text-sm"><a class="opacity-5 text-dark" href="{{ route('userprocedure.area.index', ['Name_Tractor' => $tractor]) }}">{{ $tractor }}</a></li>
+<div class="container" style="margin-top: -30px; margin-bottom: 60px;">
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb breadcrumb-rose">
+            <li class="breadcrumb-item"><a href="{{ route('userprocedure') }}" class="text-decoration-none" style="color: #C47A7A;">Procedure</a></li>
+            <li class="breadcrumb-item active fw-semibold" style="color: #4A2E2E;">{{ $tractor }}</li>
         </ol>
     </nav>
-    <br>
 
-    <section class="pt-3 pb-4" id="count-stats">
-        <div class="container">
-            @if ($errors->any())
-                <div class="row">
-                    @foreach ($errors->all() as $error)
-                        <div class="col-12 col-lg-6">
-                            <div class="alert alert-danger text-white text-xs alert-dismissible fade show" role="alert">
-                                {{ $error }}
-                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                            </div>
-                        </div>
-                    @endforeach
+    <div class="card-premium bg-white p-4">
+        @if ($errors->any())
+            @foreach ($errors->all() as $error)
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{ $error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-            @endif
+            @endforeach
+        @endif
 
-            <!-- Tombol Add -->
-            {{-- <button class="btn btn-primary mx-3" data-bs-toggle="modal" data-bs-target="#addModal">
-                <span style="padding-left: 50px; padding-right: 50px;"><b>+</b> Add</span>
-            </button> --}}
-
-            <div class="table-responsive p-0">
-                <table id="example" class="table align-items-center mb-0">
-                    <thead>
-                        <tr>
-                            <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">No</th>
-                            <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Tractor</th>
-                            <th class="text-center text-uppercase text-primary text-xxs font-weight-bolder opacity-7">Area</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ( $areas as $a )
-                        <tr>
-                            <td class="align-middle text-center">
-                                <p class="text-xs font-weight-bold text-secondary">{{ $loop->iteration }}</p>
-                            </td>
-                            <td class="align-middle text-center">
-                                <p class="text-xs">
-                                    <a href="{{ route('userprocedure.area.index', ['Name_Tractor' => $a->Name_Tractor]) }}" class="text-primary">
-                                        {{ $a->Name_Tractor }}
-                                    </a>
-                                </p>
-                            </td>
-                            <td class="align-middle text-center">
-                                <p class="text-xs">
-                                    <a href="{{ route('userprocedure.procedure.index', ['Name_Tractor' => $a->Name_Tractor, 'Name_Area' => $a->Name_Area]) }}" class="text-primary">
-                                        {{ $a->Name_Area }}
-                                    </a>
-                                </p>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-responsive">
+            <table id="example" class="table table-premium table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th class="text-center">Tractor</th>
+                        <th class="text-center">Area</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ( $areas as $a )
+                    <tr>
+                        <td class="text-center align-middle">{{ $loop->iteration }}</td>
+                        <td class="text-center align-middle">{{ $a->Name_Tractor }}</td>
+                        <td class="text-center align-middle">
+                            <a href="{{ route('userprocedure.procedure.index', ['Name_Tractor' => $a->Name_Tractor, 'Name_Area' => $a->Name_Area]) }}" class="fw-semibold" style="color: #C47A7A; text-decoration: none;">
+                                {{ $a->Name_Area }}
+                                <i class="bi bi-arrow-right ms-1"></i>
+                            </a>
+                        </td>
+                    </tr>
+                    @endforeach
+                </tbody>
+            </table>
         </div>
-    </section>
+    </div>
 </div>
 
 <!-- Modal Add -->

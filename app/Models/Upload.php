@@ -14,5 +14,6 @@ class Upload extends Model
     protected $fillable = [
         'Video_Path_Upload',
         'Desc_Upload',
+        'Order_Upload',
     ];
 }

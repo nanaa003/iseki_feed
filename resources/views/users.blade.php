@@ -1,23 +1,30 @@
 @extends('layouts.admin')
 @section('content')
 <style>
-    /* Background soft pink untuk section */
     #uploads {
-        background-color: #fff0f5;
-        padding: 60px 0;
+        background-color: #FBEFEF;
+        padding: 100px 0;
     }
 
-    /* Card */
     #uploads .card {
         background-color: #ffffff;
-        border-radius: 12px;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 4px 24px rgba(196,122,122,0.1);
+        border: none;
     }
 
-    /* Tabel header */
     #uploads .table-primary th {
-        background-color: #ffd6e0;
-        color: #000;
+        background-color: #C47A7A;
+        color: #fff;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        border: none;
+    }
+
+    .table-bordered td, .table-bordered th {
+        border-color: #F9DFDF;
     }
 </style>
 

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#F9DFDF"/>
+  <g transform="translate(320,180)" fill="#C47A7A" opacity="0.6">
+    <polygon points="-40,-25 40,-25 0,30"/>
+  </g>
+  <text x="320" y="230" font-family="Arial,sans-serif" font-size="14" fill="#8B6F6F" text-anchor="middle" opacity="0.8">ISEKI Video</text>
+</svg>

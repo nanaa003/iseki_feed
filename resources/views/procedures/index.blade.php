@@ -2,36 +2,45 @@
 @section('content')
 
     <style>
-        /* Background soft pink untuk section video */
         #uploads {
-            background-color: #fff0f5;
-            /* pink sangat soft */
+            background-color: #FBEFEF;
             padding: 60px 0;
         }
 
-        /* Card di atas background pink tetap terlihat */
         #uploads .card {
             background-color: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 4px 24px rgba(196,122,122,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
         }
 
-        /* Tabel header */
+        #uploads .card:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 16px 48px rgba(196,122,122,0.15);
+        }
+
         #uploads .table-primary th {
-            background-color: #ffd6e0;
-            color: #000;
+            background-color: #C47A7A;
+            color: #fff;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border: none;
         }
 
         #uploads .card-img-top {
             width: 100%;
             height: 200px;
-            /* tinggi seragam */
             object-fit: contain;
-            /* gambar tidak terpotong */
-            background-color: #f0f0f0;
-            /* optional, biar ada latar saat ada padding */
-            border-top-left-radius: 12px;
-            border-top-right-radius: 12px;
+            background-color: #fcf8f8;
+            border-top-left-radius: 20px;
+            border-top-right-radius: 20px;
+        }
+
+        .modal-header.bg-primary {
+            background-color: #C47A7A !important;
         }
     </style>
 
@@ -80,12 +89,12 @@
                                         <a href="#" class="text-primary mx-2" data-bs-toggle="modal"
                                             data-bs-target="#editModal" onclick="setEdit({{ $t }})"
                                             title="Edit Tractor">
-                                            <i class="material-symbols-rounded">app_registration</i>
+                                            <i class="bi bi-pencil"></i>
                                         </a>
                                         <a href="#" class="text-danger mx-2" data-bs-toggle="modal"
                                             data-bs-target="#deleteModal" onclick="setDelete({{ $t }})"
                                             title="Delete Tractor">
-                                            <i class="material-symbols-rounded">delete</i>
+                                            <i class="bi bi-trash"></i>
                                         </a>
                                     </div>
                                 </div>
